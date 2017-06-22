@@ -1,0 +1,26 @@
+hash: 53277fdbe315ae6a15380d77989d6a160d581d0488f475b637d3750d5db91307
+updated: 2017-06-19T09:06:54.242826424Z
+imports:
+- name: github.com/Azure/azure-sdk-for-go
+  version: 2629e2dfcfeab50896230140542c3b9d89b35ae1
+  subpackages:
+  - storage
+- name: github.com/Azure/go-autorest
+  version: 58f6f26e200fa5dfb40c9cd1c83f3e2c860d779d
+  subpackages:
+  - autorest
+  - autorest/adal
+  - autorest/azure
+  - autorest/date
+  - autorest/to
+- name: github.com/dgrijalva/jwt-go
+  version: a539ee1a749a2b895533f979515ac7e6e0f5b650
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: bcd8bc72b08df0f70df986b97f95590779502d31
+- name: github.com/pivotal-golang/lager
+  version: dfcbcba2dd4a5228c43b0292d219d5c010daed3a
+- name: github.com/satori/uuid
+  version: 5bf94b69c6b68ee1b541973bb8e1144db23a194b
+testImports: []

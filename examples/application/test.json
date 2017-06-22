@@ -1,0 +1,6 @@
+{
+  "resource_group_name": "binxi061901",
+  "storage_account_name": "binxi061901sa",
+  "location": "southeastasia",
+  "account_type": "Standard_LRS"
+}

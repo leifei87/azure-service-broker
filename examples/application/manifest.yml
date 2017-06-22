@@ -1,0 +1,10 @@
+---
+applications:
+  - name: test-service-broker
+    product_version: "0.0.1"
+    metadata_version: "1.0"
+    label: 'A small app to test the Microsoft Azure Service Broker'
+    description: A small app to test the Microsoft Azure service Broker
+    env:
+      GO15VENDOREXPERIMENT: 1
+      GOPACKAGENAME: main

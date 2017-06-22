@@ -1,0 +1,9 @@
+package: github.com/bingosummer/azure-service-broker/examples/application
+import:
+- package: github.com/Azure/azure-sdk-for-go
+  version: v10.0.4-beta
+  subpackages:
+  - storage
+- package: github.com/gorilla/mux
+  version: v1.4.0
+- package: github.com/pivotal-golang/lager
