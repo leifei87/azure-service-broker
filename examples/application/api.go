@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/Azure/azure-sdk-for-go/arm/redis"
+	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest"
 )
@@ -93,9 +94,9 @@ func getRedisCache(w http.ResponseWriter, req *http.Request) {
 	}
 	op,err := client.Update(redisResourceGroup,redisName,updateParameters)
 	onErrorFail(err, "Get Redis failed")
-	redisName := *(op.Name)
+	redis := *(op.Name)
 	sslEnabled := *((*(op.ResourceProperties)).EnableNonSslPort)
-	result := redisName + ":" + strconv.FormatBool(sslEnabled)
+	result := redis + ":" + strconv.FormatBool(sslEnabled)
 	println("encoding response", err, lager.Data{"response": op})
 
 	respond(w, http.StatusOK, result)
