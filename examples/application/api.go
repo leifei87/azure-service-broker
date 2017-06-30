@@ -5,10 +5,14 @@ import (
 	"net/http"
 	"os"
 	"fmt"
+	"strconv"
 
 	"github.com/pivotal-golang/lager"
 	"github.com/gorilla/mux"
 	"github.com/Azure/azure-sdk-for-go/storage"
+	"github.com/Azure/azure-sdk-for-go/arm/redis"
+	"github.com/Azure/go-autorest/autorest/adal"
+	"github.com/Azure/go-autorest/autorest"
 )
 
 var (
@@ -19,6 +23,7 @@ var (
 
 func AttachRoutes(router *mux.Router) {
 	router.HandleFunc("/test-storage", listContainers).Methods("GET")
+	router.HandleFunc("/test-redis", getRedisCache).Methods("GET")
 }
 
 func NewAppRouter() http.Handler {
@@ -69,6 +74,33 @@ func listContainers(w http.ResponseWriter, req *http.Request) {
 	respond(w, http.StatusOK, containers)
 }
 
+func getRedisCache(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("Azure Redis Cache Sample")
+	subscriptionID := getEnvVarOrExit("AZURE_SUBSCRIPTION_ID")
+	redisResourceGroup := getEnvVarOrExit("REDIS_RESOURGE_GROUP")
+	redisName := getEnvVarOrExit("REDIS_NAME")
+
+	spt := getServicePrincipalToken()
+	client := redis.NewGroupClient(subscriptionID)
+	client.Authorizer = autorest.NewBearerAuthorizer(spt)
+
+	enableport := true
+	updateProperties := redis.UpdateProperties{
+		EnableNonSslPort: &enableport,
+	}
+	updateParameters := redis.UpdateParameters{
+		&updateProperties,
+	}
+	op,err := client.Update(redisResourceGroup,redisName,updateParameters)
+	onErrorFail(err, "Get Redis failed")
+	redisName := *(op.Name)
+	sslEnabled := *((*(op.ResourceProperties)).EnableNonSslPort)
+	result := redisName + ":" + strconv.FormatBool(sslEnabled)
+	println("encoding response", err, lager.Data{"response": op})
+
+	respond(w, http.StatusOK, result)
+}
+
 func respond(w http.ResponseWriter, status int, response interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -86,4 +118,24 @@ func onErrorFail(err error, message string) {
 		fmt.Printf("%s: %s\n", message, err)
 		os.Exit(1)
 	}
+}
+
+func getEnvVarOrExit(varName string) string {
+		value := os.Getenv(varName)
+		if value == "" {
+			fmt.Printf("Missing environment variable %s\n", varName)
+			os.Exit(1)
+		}
+		return value
+}
+
+func getServicePrincipalToken() *adal.ServicePrincipalToken {
+	tenantID := getEnvVarOrExit("AZURE_TENANT_ID")
+	oauthConfig, err := adal.NewOAuthConfig(azure.PublicCloud.ActiveDirectoryEndpoint, tenantID)
+	onErrorFail(err, "OAuthConfigForTenant failed")
+	clientID := getEnvVarOrExit("AZURE_CLIENT_ID")
+	clientSecret := getEnvVarOrExit("AZURE_CLIENT_SECRET")
+	spt, err := adal.NewServicePrincipalToken(*oauthConfig, clientID, clientSecret, azure.PublicCloud.ResourceManagerEndpoint)
+	onErrorFail(err, "NewServicePrincipalToken failed")
+	return spt
 }
