@@ -208,7 +208,7 @@ func getServiceBus(w http.ResponseWriter, req *http.Request) {
 	sbResourceGroup := getEnvVarOrExit("SERVICEBUS_RESOURGE_GROUP")
 	sbName := getEnvVarOrExit("SERVICEBUS_NAME")
 	queueName := getEnvVarOrExit("SERVICEBUS_QUEUE_NAME")
-	location := "eastus"
+	location := getEnvVarOrExit("SERVICEBUS_QUEUE_LOCATION")
 	parameter := servicebus.QueueCreateOrUpdateParameters {
 		Location: &location,
 	}
