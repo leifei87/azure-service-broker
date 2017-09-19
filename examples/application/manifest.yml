@@ -6,5 +6,4 @@ applications:
     label: 'A small app to test the Microsoft Azure Service Broker'
     description: A small app to test the Microsoft Azure service Broker
     env:
-      GO15VENDOREXPERIMENT: 1
       GOPACKAGENAME: main
